@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = sns.load_dataset('iris')
+df.head(3)
+
+df.isnull().sum()
+
+cat = []
+num = []
+for col in df.columns:
+    if df[col].dtype == 'object':
+        cat.append(col)
+    elif df[col].dtype != 'object':
+        num.append(col)
+
+cat
+
+num
+
+df.dtypes
+
+df.hist(figsize=(10,8))
+plt.show()
+
+df.boxplot(figsize = (10, 8))
+
+for col in num:
+    q1 = df[col].quantile(0.25)
+    q3 = df[col].quantile(0.75)
+    iqr = q3 - q1
+    low = q1 - (iqr*1.5)
+    high = q3 + (iqr*1.5)
+    df.loc[df[col]<low, col] = low
+    df.loc[df[col]>high, col] = high
+
+df.boxplot(figsize = (10, 8))
+
+ 

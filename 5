@@ -1,0 +1,56 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('Social_Network_Ads.csv')
+df.head(3)
+
+df.columns
+
+df.describe()
+
+df.info()
+
+df.isnull().sum()
+
+sns.pairplot(data = df, hue = 'Purchased')
+plt.show()
+
+X = df.drop(['Purchased', 'Gender'], axis = 1).values
+y = df['Purchased'].values
+
+X[:3, :]
+
+y[:3]
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.fit_transform(X_test)
+
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression(random_state = 0)
+model.fit(X_train, y_train)
+
+model.score(X_test, y_test)
+
+y_pred = model.predict(X_test)
+y_pred
+
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+
+from sklearn.metrics import classification_report
+
+print(classification_report(y_test, y_pred))
+
+

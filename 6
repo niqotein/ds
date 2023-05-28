@@ -1,0 +1,50 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('iris.csv')
+df.head(3)
+
+df.columns
+
+df.describe()
+
+df.info()
+
+df.isnull().sum()
+
+sns.pairplot(data = df.drop('Id', axis = 1), hue = 'Species')
+plt.show()
+
+X = df.drop('Species', axis = 1)
+y = df['Species']
+
+X.head(3)
+
+y.head(3)
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 0)
+
+from sklearn.naive_bayes import MultinomialNB
+
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+model.score(X_test, y_test)
+
+y_pred = model.predict(X_test)
+y_pred
+
+from sklearn.metrics import classification_report
+
+print(classification_report(y_test, y_pred))
+
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+
+

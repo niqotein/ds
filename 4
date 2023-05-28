@@ -1,0 +1,69 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("HousingData.csv")
+df.head(3)
+
+df.columns
+
+df.describe()
+
+df.info()
+
+df.isnull().sum()
+
+for col in df.columns:
+    df[col].fillna(df[col].mean(), inplace = True)
+
+df.isnull().sum()
+
+X = df.drop('MEDV', axis = 1)
+y = df['MEDV']
+
+X.head(3)
+
+y.head(3)
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+model.score(X_test, y_test)
+
+y_pred = model.predict(X_test)
+
+df1 = pd.DataFrame({'Actual':y_test, 'Predicted':y_pred, 'Variance':y_test-y_pred})
+df1.head()
+
+plt.scatter(y_test, y_pred)
+plt.show()
+
+sns.regplot(x = y_test, ci = None, y = y_pred);
+
+model.intercept_
+
+coeff = model.coef_
+coeff
+
+coeff_df = pd.DataFrame()
+coeff_df['Column name'] = X.columns
+coeff_df['Coefficient'] = coeff
+coeff_df
+
+plt.figure(figsize=(10,10))
+sns.barplot(x = "Column name", y="Coefficient", data = coeff_df)
+plt.show()
+
+from sklearn import metrics
+
+print('Mean R2 score on test data of Linear Regression: ',metrics.r2_score(y_test, y_pred))
+print('Mean Absolute Error on test data of Linear Regression: ',metrics.mean_absolute_error(y_test, y_pred))
+print('Mean Squared Error on test data of Linear Regression: ',metrics.mean_squared_error(y_test, y_pred))
+print('Root Mean Squared Error on test data of Linear Regression: ',np.sqrt(metrics.mean_squared_error(y_test, y_pred)))

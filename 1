@@ -1,0 +1,125 @@
+import pandas as pd
+import numpy as np 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('weatherAUS.csv')
+df.head(3)
+
+df.describe()
+
+df.info()
+
+df.columns
+
+df.dtypes
+
+df.shape
+
+# Numerical and Categorical Columns
+numerical = [col for col in df.columns if df[col].dtype != 'object']
+categorical = [col for col in df.columns if df[col].dtype == 'object']
+
+numerical
+
+categorical
+
+# Outlier Detection and Removal
+i = 1
+
+plt.figure(figsize = (20, 25))
+
+for col in numerical:
+    plt.subplot(9, 2, i)
+    sns.boxplot(data = df[col], orient = 'h', color = 'r').set_title(col)
+    i+=1
+    
+plt.tight_layout()
+plt.show()
+    
+
+for col in numerical:
+    q1 = df[col].quantile(0.25)
+    q3 = df[col].quantile(0.75)
+    IQR = q3-q1
+    low_limit = q1 - (IQR*1.5)
+    high_limit = q3 + (IQR*1.5)
+    
+    df.loc[df[col]<low_limit, col] = low_limit
+    df.loc[df[col]>high_limit, col] = high_limit
+    
+
+i = 1
+
+plt.figure(figsize = (20, 25))
+
+for col in numerical:
+    plt.subplot(9, 2, i)
+    sns.boxplot(data = df[col], orient = 'h').set_title(col)
+    i+=1
+    
+plt.tight_layout()
+plt.show()
+
+# NULL
+print(df.isnull().sum())
+print('----------------------------------')
+print(df.isnull().sum().sum())
+
+for col in df.columns:
+    if col in numerical:
+        df[col].fillna(df[col].mean(), inplace = True)
+    elif col in categorical:
+        df[col].fillna(df[col].mode()[0], inplace = True)
+
+# NULL
+print(df.isnull().sum())
+print('----------------------------------')
+print(df.isnull().sum().sum())
+
+# Type Conversion
+
+df['Date'].dtype
+
+df['Date']= pd.to_datetime(df['Date'])
+df['Date'].dtype
+
+# Encoding
+
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+df['Location'] = le.fit_transform(df['Location'])
+
+df['Location'].unique()
+
+df['RainToday'].unique()
+
+df.loc[df['RainToday']== 'No', 'RainToday']  = 0
+df.loc[df['RainToday']== 'Yes' , 'RainToday'] = 1
+
+df['RainToday'].unique()
+
+df['Location'].unique()
+
+# Transformation / Scaling
+
+print(df['Pressure9am'].unique())
+
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler()
+df['Pressure9am'] = sc.fit_transform(np.array(df['Pressure9am']).reshape(-1, 1))
+
+print(df['Pressure9am'].unique())
+
+print(df['Pressure3pm'].unique())
+
+
+
+from sklearn.preprocessing import MinMaxScaler
+
+sc = MinMaxScaler()
+df['Pressure3pm'] = sc.fit_transform(np.array(df['Pressure3pm']).reshape(-1, 1))
+
+print(df['Pressure3pm'].unique())

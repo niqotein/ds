@@ -1,0 +1,100 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('Academic-Performance-Dataset.csv')
+df.head(3)
+
+numerical = [x for x in df.columns if df[x].dtype != 'object']
+numerical
+
+categorical = [x for x in df.columns if df[x].dtype == 'object']
+categorical
+
+i = 1
+plt.figure(figsize=(10, 6))
+for col in numerical:
+    plt.subplot(5, 2, i)
+    sns.boxplot(data=df[col], orient = 'h').set_title(col)
+    i += 1
+
+plt.tight_layout()
+plt.show()
+
+for col in numerical:
+    q1 = df[col].quantile(0.25)
+    q3 = df[col].quantile(0.75)
+    IQR = q3-q1
+    low = q1 - (1.5 * IQR)
+    high = q3 + (1.5 * IQR)
+    df.loc[df[col]<low, col] = low
+    df.loc[df[col]>high, col] = high
+
+i = 1
+plt.figure(figsize=(10, 6))
+for col in numerical:
+    plt.subplot(5, 2, i)
+    sns.boxplot(data=df[col], orient = 'h').set_title(col)
+    i += 1
+
+plt.tight_layout()
+plt.show()
+
+print(df.isnull().sum())
+print('-------------------------')
+print(df.isnull().sum().sum())
+
+for col in numerical:
+    df[col].fillna(df[col].mean(), inplace = True)
+for col in categorical:
+    df[col].fillna(df[col].mode()[0], inplace = True)
+
+print(df.isnull().sum())
+print('-------------------------')
+print(df.isnull().sum().sum())
+
+numerical = ['Phy_marks', 'Che_marks', 'EM1_marks', 'PPS_marks', 'PPS_marks', 'SME_marks']
+
+# Min Max
+
+i = 1
+plt.figure(figsize=(10, 10))
+for col in numerical:
+    plt.subplot(3, 2, i)
+    df[col].plot(kind = 'hist').set_title(col)
+    i+= 1
+plt.tight_layout()
+plt.show()
+
+from sklearn.preprocessing import MinMaxScaler
+
+min_max = MinMaxScaler()
+
+df[numerical] = min_max.fit_transform(df[numerical])
+
+i = 1
+plt.figure(figsize=(10, 10))
+for col in numerical:
+    plt.subplot(3, 2, i)
+    df[col].plot(kind = 'hist').set_title(col)
+    i+= 1
+plt.tight_layout()
+plt.show()
+
+# Grade
+
+def grading(val):
+    if val >= 80 and val <=100:
+        return 'O'
+    elif val >= 70 and val <80:
+        return 'A'
+    elif val >= 60 and val <70:
+        return 'B'
+    elif val < 60:
+        return 'F'
+
+df['Grade'] = df['Percentage'].apply(grading)
+
+df.head()
+

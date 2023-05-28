@@ -1,0 +1,154 @@
+ import nltk
+
+# nltk.download('all')
+
+# Tokenize
+
+from nltk.tokenize import word_tokenize
+
+sentence = 'The quick brown fox jumps over the lazy dog'
+
+tokenized = word_tokenize(sentence)
+
+tokenized
+
+from nltk.tokenize import sent_tokenize
+
+sentence = 'The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.'
+
+tokenized = sent_tokenize(sentence)
+
+tokenized
+
+# Stemming
+
+from nltk.stem import PorterStemmer
+
+words = ['program', 'programming', 'programed', 'programmer']
+
+stem = []
+
+ps = PorterStemmer()
+
+for w in words:
+    stem.append(ps.stem(w))
+
+stem
+
+# Lemmatization
+
+from nltk.stem import WordNetLemmatizer
+
+words = ['stoped', 'study', 'floors', 'crying']
+
+lem = []
+
+wnl = WordNetLemmatizer()
+
+for w in words:
+    lem.append(wnl.lemmatize(w))
+    
+lem
+
+# Stop Words
+
+from nltk.corpus import stopwords
+
+stopwords = stopwords.words('english')
+stopwords
+
+text = 'AI was introduced in the year 1956 but it gained popularity recently.'
+
+tokenized = word_tokenize(text)
+
+remstopwords = []
+
+for token in tokenized:
+    if token not in set(stopwords):
+        remstopwords.append(token)
+        
+remstopwords
+
+# POS Tagging
+
+text = 'AI was introduced in the year 1956 but it gained popularity recently.'
+
+postag = []
+
+tokenized = word_tokenize(text)
+
+for token in tokenized:
+    postag.append(nltk.pos_tag([token]))
+
+postag
+
+
+
+corpus = [
+    'The quick brown fox jumps over the lazy dog',
+    'The brown fox is quick',
+    'The lazy dog is sleeping'
+]
+
+# TF
+
+def tf(corpus):
+    dic={}
+    for document in corpus:
+        for word in document.split():
+            if word in dic:
+                dic[word]+=1
+            else:
+                dic[word]=1
+        for word,freq in dic.items():
+            dic[word]=freq/len(document.split())
+    return dic
+TF = tf(corpus)
+TF
+
+import math
+
+n = len(corpus)
+
+def idf(dic):
+    idfdic = {}
+    
+    for tok, freq in dic.items():
+        cnt = 0
+        for document in corpus:
+            if tok in document:
+                cnt += 1
+        idfdic[tok] = math.log(n / cnt)
+    return idfdic 
+
+IDF = idf(TF)
+IDF
+
+tfidfsl = []
+for document in corpus:
+    tfidfs = {}
+    for word in set(document.split()):
+        tfidfs[word] = TF[word] * IDF[word]
+    tfidfsl.append(tfidfs)
+
+tfidfsl
+
+
+
+
+
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf = TfidfVectorizer()
+
+result = tfidf.fit_transform(corpus)
+
+print('\nWord indexes:')
+print(tfidf.vocabulary_)
+ 
+# display tf-idf values
+print('\ntf-idf values:')
+print(result)
+

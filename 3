@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+
+# 3 - 1
+
+df = pd.read_csv('supermarket_sales.csv')
+df.head(3)
+
+df.info()
+
+df.isnull().sum()
+
+categorical = [col for col in df.columns if df[col].dtype == 'object']
+categorical
+
+# Rating
+
+print(f"Rating mean = {df['Rating'].mean()}")
+print(f"Rating mode = {df['Rating'].mode()[0]}")
+print(f"Rating median = {df['Rating'].median()}")
+print(f"Rating max = {df['Rating'].max()}")
+print(f"Rating min = {df['Rating'].min()}")
+print(f"Rating standard deviation = {df['Rating'].std()}")
+
+df.groupby('Branch')['gross income'].sum()
+
+df.groupby('Branch')['gross income'].mean()
+
+df.groupby('Payment')['gross income'].mean()
+
+df.groupby('Branch').count()
+
+df.groupby('Gender')['Rating'].mean()
+
+df.groupby('Gender')['Quantity'].mean()
+
+df.groupby('Payment')['gross income'].sum()
+
+df.groupby('Branch')['Payment'].agg(pd.Series.mode)
+
+df.groupby(['Gender', 'Product line'])['Total'].mean()
+
+---------------------------------------------------------------------------------------
+
+# 3 - 2
+
+df = pd.read_csv('Iris.csv')
+df.drop('Id', inplace = True, axis = 1)
+df.head(3)
+
+df['Species'].unique()
+
+setosa_data = df[df['Species'] == 'Iris-setosa']
+setosa_data.head()
+
+versicolor_data = df[df['Species'] == 'Iris-versicolor']
+versicolor_data.head()
+
+virginica_data = df[df['Species'] == 'Iris-virginica']
+virginica_data.head()
+
+setosa_data.describe()
+
+versicolor_data.describe()
+
+virginica_data.describe()
+

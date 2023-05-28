@@ -1,0 +1,31 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = sns.load_dataset('titanic')
+df.head()
+
+df.shape
+
+df.isnull().sum()
+
+df.dropna(inplace = True)
+
+df.isnull().sum()
+
+
+
+sns.countplot(x = 'sex', data = df)
+plt.show()
+
+sns.countplot(x = 'survived', data = df)
+
+sns.displot(df['fare'], kde = 'true')
+plt.show()
+
+df.groupby('sex')['age'].mean().plot(kind = 'bar')
+plt.show()
+
+sns.boxplot(x = 'class', y = 'fare', data = df)
+
